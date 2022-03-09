@@ -66,7 +66,7 @@ public class HiViewPrinter implements HiLogPrinter {
             notifyItemInserted(logs.size() - 1);
         }
 
-        //构造方法将LayoutInflater传入
+        //将LayoutInflater传入构造方法中
         public LogAdapter(LayoutInflater inflater) {
             this.inflater = inflater;
         }
