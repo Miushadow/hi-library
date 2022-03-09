@@ -72,8 +72,8 @@ public class HiViewPrinter implements HiLogPrinter {
         }
 
         /*
-        当RecyclerView需要创建新的ViewHolder时，会调用此方法
-        此方法会创建并初始化ViewHolder及其关联的View，但不会填充视图的内容
+        当RecyclerView需要创建新的ViewHolder时，会调用此方法。
+        此方法会创建并初始化ViewHolder及其关联的View，但不会填充视图的内容。
          */
         @NonNull
         @Override
