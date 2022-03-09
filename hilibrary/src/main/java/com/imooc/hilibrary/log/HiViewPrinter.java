@@ -127,7 +127,7 @@ public class HiViewPrinter implements HiLogPrinter {
         }
 
         /*
-        RecyclerView调用此方法来获取数据集的大小。
+        RecyclerView调用此方法来获取数据集的大小
          */
         @Override
         public int getItemCount() {
