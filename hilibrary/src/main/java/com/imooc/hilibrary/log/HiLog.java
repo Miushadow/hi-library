@@ -8,7 +8,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 
 /**
- * Tips：
+ * 入口类，提供封装好的各种日志操作方法，具有以下业务逻辑：
  * 1.打印堆栈信息
  * 2.File输出
  * 3.模拟控制台
