@@ -8,10 +8,13 @@ import java.util.List;
 import androidx.annotation.NonNull;
 
 /**
- * 入口类，提供封装好的各种日志操作方法，具有以下业务逻辑：
- * 1.打印堆栈信息
- * 2.File输出
- * 3.模拟控制台
+ * HiLog的门面，提供了不同日志级别的打印接口。
+ * 通过对HiLogConfig进行配置，能够实现以下需求：
+ * 1.能够打印堆栈/线程信息
+ * 2.支持任何数据类型的打印（Android的Log系统只支持String类型的打印）
+ * 3.支持日志可视化
+ * 4.能够实现文件打印
+ * 5.支持不同打印器的插拔
  */
 public class HiLog {
 

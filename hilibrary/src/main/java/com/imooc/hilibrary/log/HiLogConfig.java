@@ -1,7 +1,12 @@
 package com.imooc.hilibrary.log;
 
 /**
- * 对HiLog的打印功能进行个性化配置
+ * HiLog日志库的配置类，负责HiLog打印的相关配置，具有以下作用：
+ * #1.是否启用配置
+ * #2.对打印内容是否包含线程信息进行配置
+ * #3.对打印内容是否包含堆栈信息，以及堆栈信息的深度进行配置（深度为0表示不包含堆栈信息）
+ * #4.对全局的TAG进行配置
+ * #5.序列化服务
  */
 public abstract class HiLogConfig {
 
@@ -42,17 +47,23 @@ public abstract class HiLogConfig {
         return "HiLog";
     }
 
-    //Json序列化器的注入
-    public JsonParser injectJsonParser() {
-        return null;
-    }
-
-    //允许用户注册打印器
+    /**
+     *  允许用户注册打印器
+     */
     public HiLogPrinter[] printers() {
         return null;
     }
 
-    //提供对象序列化的接口
+    /**
+     * Json序列化器的注入
+     */
+    public JsonParser injectJsonParser() {
+        return null;
+    }
+
+    /**
+     * 提供对象序列化的接口
+     */
     public interface JsonParser {
         String toJson(Object src);
     }
