@@ -24,15 +24,37 @@ public class HiViewPrinter implements HiLogPrinter {
     private RecyclerView recyclerView;
     private LogAdapter adapter;
     private HiViewPrinterProvider viewProvider;
+    private LayoutInflater inflater;
 
     public HiViewPrinter(Activity activity) {
         FrameLayout rootView = activity.findViewById(android.R.id.content);
+        recyclerView = initRecyclerView(activity);
+        viewProvider = new HiViewPrinterProvider(rootView, recyclerView);
+    }
+
+    /**
+     * RecyclerView进行初始化主要分为以下两个步骤：
+     * 1.为RecyclerView设置布局管理器LayoutManager
+     * 2.为RecyclerView设置自定义的适配器Adapter
+     *
+     * 备注1：RecyclerView提供了三种布局管理器：
+     * #1.LinearLayoutManager:以垂直或水平列表的方式展示Item
+     * #2.GridLayoutManager:以网格方式展示Item
+     * #3.StaggeredGridLayoutManager:以瀑布流的方式展示Item
+     *
+     * 备注2：获取LayoutInflater实例有3种方式
+     * #1.调用Activity的getLayoutInflater方法
+     * #2.LayoutInflater inflater = LayoutInflater.from(context)
+     * #3.LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
+     */
+    private RecyclerView initRecyclerView(Activity activity) {
         recyclerView = new RecyclerView(activity);
-        adapter = new LogAdapter(LayoutInflater.from(recyclerView.getContext()));
         LinearLayoutManager layoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(layoutManager);
+        inflater = activity.getLayoutInflater();
+        adapter = new LogAdapter(inflater);
         recyclerView.setAdapter(adapter);
-        viewProvider = new HiViewPrinterProvider(rootView, recyclerView);
+        return recyclerView;
     }
 
     /**
@@ -47,18 +69,36 @@ public class HiViewPrinter implements HiLogPrinter {
     public void print(@NonNull HiLogConfig config, int level, String tag, @NonNull String printString) {
         //将log展示添加到recyclerView
         adapter.addItem(new HiLogMo(System.currentTimeMillis(), level, tag, printString));
-
         //滚动到对应的位置
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
 
     /**
-     * 为RecyclerView创建Adapter
+     * ViewHolder不是Android标准API，是一种设计方式，通常搭配适配器使用。
+     * 它的作用是在listview/recyclerview滚动的时候快速设置值，而不用每次都去执行findViewById的操作，从而提升了性能。
      */
-    private static class LogAdapter extends RecyclerView.Adapter<LogViewHolder> {
+    private static class LogViewHolder extends RecyclerView.ViewHolder {
+
+        TextView tagView;
+        TextView messageView;
+
+        public LogViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tagView = itemView.findViewById(R.id.tag);
+            messageView = itemView.findViewById(R.id.message);
+        }
+    }
+
+    /**
+     * 继承自RecyclerView.Adapter类，主要用来将数据和布局item进行绑定
+     * 在Adapter中需要实现以下三个方法
+     * #1.onCreateViewHolder
+     * #2.onBindViewHolder
+     * #3.getItemCount
+     */
+    private class LogAdapter extends RecyclerView.Adapter<LogViewHolder> {
 
         private LayoutInflater inflater;
-
         private List<HiLogMo> logs = new ArrayList<>();
 
         void addItem(HiLogMo logItem) {
@@ -66,14 +106,16 @@ public class HiViewPrinter implements HiLogPrinter {
             notifyItemInserted(logs.size() - 1);
         }
 
-        //将LayoutInflater传入构造方法中
+        /**
+         * 构造方法中需要将LayoutInflater传进来
+         */
         public LogAdapter(LayoutInflater inflater) {
             this.inflater = inflater;
         }
 
-        /*
-        当RecyclerView需要创建新的ViewHolder时，会调用此方法。
-        此方法会创建并初始化ViewHolder及其关联的View，但不会填充视图的内容。
+        /**
+         * LayoutInflater.inflate方法的作用是将一个用xml定义的布局文件转换成view对象。
+         * onCreateViewHolder最终会创建一个我们自定义的ViewHolder对象，并将其关联的itemView对象传进去
          */
         @NonNull
         @Override
@@ -82,8 +124,8 @@ public class HiViewPrinter implements HiLogPrinter {
             return new LogViewHolder(itemView);
         }
 
-        /*
-        RecyclerView调用此方法将ViewHolder与数据相关联。此方法会提取适当的数据，并使用该数据填充ViewHolder的布局
+        /**
+         * 该方法的作用是将适配的数据渲染到View中
          */
         @Override
         public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
@@ -91,9 +133,16 @@ public class HiViewPrinter implements HiLogPrinter {
             int color = getHighlightColor(logItem.level);
             holder.tagView.setTextColor(color);
             holder.messageView.setTextColor(color);
-
             holder.tagView.setText(logItem.getFlattened());
             holder.messageView.setText(logItem.log);
+        }
+
+        /**
+         * 返回Item的数量
+         */
+        @Override
+        public int getItemCount() {
+            return logs.size();
         }
 
         /**
@@ -124,29 +173,6 @@ public class HiViewPrinter implements HiLogPrinter {
                     break;
             }
             return highlight;
-        }
-
-        /*
-        RecyclerView调用此方法来获取数据集的大小
-         */
-        @Override
-        public int getItemCount() {
-            return logs.size();
-        }
-    }
-
-    /**
-     * 为LogAdapter添加ViewHolder
-     */
-    private static class LogViewHolder extends RecyclerView.ViewHolder {
-
-        TextView tagView;
-        TextView messageView;
-
-        public LogViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tagView = itemView.findViewById(R.id.tag);
-            messageView = itemView.findViewById(R.id.message);
         }
     }
 
