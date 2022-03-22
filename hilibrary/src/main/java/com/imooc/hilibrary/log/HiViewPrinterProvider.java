@@ -37,7 +37,12 @@ public class HiViewPrinterProvider {
         if (rootView.findViewWithTag(TAG_FLOATING_BUTTON) != null) {
             return;
         }
-        //新建一个FrameLayout，为其设置属性，宽，高都是WRAP_CONTENT
+        /* 1.LayoutParams是ViewGroup的一个静态内部类，是View用来告诉它的父控件如何放置自己的。一般用于动态布局时，
+           通过代码来设置该布局的一些参数，比如宽高等
+           2.FrameLayout是Android几大布局中最简单的一个布局，在该布局中，整个界面被当成一块空白备用区域，所有的子
+           元素都统统位于该区域的左上角，并且后面的子元素直接覆盖在前面的子元素之上，将前面的子元素遮挡。相同层级布局中，
+           FrameLayout的效率是最高的，占用内存相对也是最小的。
+         */
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         //设置其位置为右下角
         params.gravity = Gravity.BOTTOM | Gravity.END;
@@ -46,6 +51,7 @@ public class HiViewPrinterProvider {
         floatingButton.setBackgroundColor(Color.BLACK);
         //设置透明度
         floatingButton.setAlpha(0.8f);
+        //按以上配置参数，将floatingButton这个View添加到rootView里面
         rootView.addView(floatingButton, params);
     }
 

@@ -68,7 +68,7 @@ public class HiViewPrinter implements HiLogPrinter {
     @Override
     public void print(@NonNull HiLogConfig config, int level, String tag, @NonNull String printString) {
         //将log展示添加到recyclerView
-        adapter.addItem(new HiLogMo(System.currentTimeMillis(), level, tag, printString));
+        adapter.addItem(new HiViewPrinterMo(System.currentTimeMillis(), level, tag, printString));
         //滚动到对应的位置
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
@@ -99,11 +99,13 @@ public class HiViewPrinter implements HiLogPrinter {
     private class LogAdapter extends RecyclerView.Adapter<LogViewHolder> {
 
         private LayoutInflater inflater;
-        private List<HiLogMo> logs = new ArrayList<>();
+        //新建一个List，用于存储每个Item的数据层Mo对象
+        private List<HiViewPrinterMo> logItemList = new ArrayList<>();
 
-        void addItem(HiLogMo logItem) {
-            logs.add(logItem);
-            notifyItemInserted(logs.size() - 1);
+        void addItem(HiViewPrinterMo logItem) {
+            logItemList.add(logItem);
+            //插入指定位置的item，并刷新
+            notifyItemInserted(logItemList.size() - 1);
         }
 
         /**
@@ -129,11 +131,11 @@ public class HiViewPrinter implements HiLogPrinter {
          */
         @Override
         public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
-            HiLogMo logItem = logs.get(position);
+            HiViewPrinterMo logItem = logItemList.get(position);
             int color = getHighlightColor(logItem.level);
             holder.tagView.setTextColor(color);
             holder.messageView.setTextColor(color);
-            holder.tagView.setText(logItem.getFlattened());
+            holder.tagView.setText(logItem.assembleVisualLog());
             holder.messageView.setText(logItem.log);
         }
 
@@ -142,7 +144,7 @@ public class HiViewPrinter implements HiLogPrinter {
          */
         @Override
         public int getItemCount() {
-            return logs.size();
+            return logItemList.size();
         }
 
         /**
