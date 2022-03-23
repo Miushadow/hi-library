@@ -63,6 +63,10 @@ public abstract class HiLogConfig {
 
     /**
      * 提供对象序列化的接口
+     *
+     * 内存中的数据对象只有转换成二进制流才可以进行数据持久化和网络传输，将Java对象转换成二进制流的过程称为对象的序列化，
+     * 将二进制流恢复为数据对象的过程称为反序列化。
+     * 常见的
      */
     public interface JsonParser {
         String toJson(Object src);
