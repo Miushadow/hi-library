@@ -56,17 +56,29 @@ public abstract class HiLogConfig {
 
     /**
      * Json序列化器的注入
+     *
+     * 如果要通过Gson来实现Json的序列化，则需要通过以下方式注入Gson
      */
     public JsonParser injectJsonParser() {
+        /*return new JsonParser() {
+            @Override
+            public String toJson(Object src) {
+                Gson gson = new Gson();
+                return gson.toJson(src);
+            }
+        }*/
         return null;
     }
 
     /**
-     * 提供对象序列化的接口
+     * 序列化通用接口，让使用者的Json序列化工具（如fastjson/gson）可以做到与服务提供方进行解耦
      *
      * 内存中的数据对象只有转换成二进制流才可以进行数据持久化和网络传输，将Java对象转换成二进制流的过程称为对象的序列化，
      * 将二进制流恢复为数据对象的过程称为反序列化。
-     * 常见的
+     *
+     * 常见的序列化方式有以下两种：
+     * #1.Java原生序列化：特点是兼容性好，但不支持跨语言，性能一版
+     * #2.Json序列化：特点是可读性好，但是有安全性风险
      */
     public interface JsonParser {
         String toJson(Object src);
