@@ -20,6 +20,10 @@ public class HiLog {
 
     private static final String HI_LOG_IGNORE_PACKAGE;
 
+    /*
+    忽略掉HiLog系统本身的打印，因为查看打印时，需要关注的是调用方法的打印，无需关注Log系统自身打印
+    public String substring(int beginIndex, int endIndex)
+     */
     static {
         String className = HiLog.class.getName();
         HI_LOG_IGNORE_PACKAGE = className.substring(0, className.lastIndexOf('.') + 1);

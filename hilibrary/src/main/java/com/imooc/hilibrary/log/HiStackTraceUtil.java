@@ -10,17 +10,26 @@ public class HiStackTraceUtil {
     }
 
     /**
-     * 对堆栈信息进行裁剪
+     * 根据传入的堆栈信息最大打印长度maxDepth，对堆栈信息进行裁剪
      */
     private static StackTraceElement[] cropStackTrace(StackTraceElement[] callStack, int maxDepth) {
         //获取堆栈信息的实际长度
         int realDepth = callStack.length;
         if (maxDepth > 0) {
-            //从max和real中取出最小值
+            //从堆栈信息的实际长度realDepth和定义的最大长度maxDepth中取出最小值
             realDepth = Math.min(maxDepth, realDepth);
         }
         //创建一个存放最终要返回的StackTrace的数组
         StackTraceElement[] realStack = new StackTraceElement[realDepth];
+        /*
+        System.arraycopy函数：
+        public static native void arraycopy(Object src,  int  srcPos,
+                                        Object dest, int destPos,
+                                        int length);
+
+        从原数组callStack的第srcPos个元素开始复制，拷贝到目标数组realStack中(从第destPos个元素开始粘贴)，
+        一共拷贝realDepth个元素
+         */
         System.arraycopy(callStack, 0, realStack, 0, realDepth);
         return realStack;
     }
